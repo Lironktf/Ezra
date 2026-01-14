@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ezra</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #000000;
+            --bg-secondary: #1a1a1a;
+            --text-primary: #ffffff;
+            --text-secondary: #cccccc;
+            --text-tertiary: #999999;
+            --border-color: #333333;
+            --accent: #2563eb;
+            --accent-hover: #1d4ed8;
+            --success: #10b981;
+            --error: #ef4444;
+            --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.5), 0 1px 2px -1px rgba(0, 0, 0, 0.3);
+        }
+
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            font-weight: 400;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 60px 24px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        .search-section {
+            margin-bottom: 48px;
+        }
+
+        .search-box {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 16px 20px;
+            font-size: 1rem;
+            font-family: inherit;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            resize: vertical;
+            min-height: 120px;
+            transition: border-color 0.2s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        textarea::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        .settings {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .setting-group {
+            flex: 1;
+            min-width: 140px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 10px 12px;
+            font-size: 0.9375rem;
+            font-family: inherit;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        button {
+            width: 100%;
+            padding: 14px 24px;
+            font-size: 1rem;
+            font-weight: 500;
+            font-family: inherit;
+            background: white;
+            color: black;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button:hover:not(:disabled) {
+            background: #e5e5e5;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 48px 24px;
+            color: var(--text-secondary);
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 16px;
+            border: 3px solid var(--border-color);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .results-section {
+            margin-top: 48px;
+        }
+
+        .repo-info {
+            background: var(--bg-secondary);
+            padding: 20px 24px;
+            border-radius: 8px;
+            margin-bottom: 32px;
+            border: 1px solid var(--border-color);
+        }
+
+        .repo-info h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .repo-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .repo-tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .repo-tag::before {
+            content: "📦";
+            margin-right: 6px;
+        }
+
+        .repo-explanation {
+            font-size: 0.9375rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .expert-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .expert-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 16px;
+            gap: 16px;
+        }
+
+        .expert-info h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .expert-info h3 a {
+            color: var(--accent);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .expert-info h3 a:hover {
+            color: var(--accent-hover);
+        }
+
+        .expert-metrics {
+            display: flex;
+            gap: 16px;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-top: 8px;
+        }
+
+        .metric {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .score-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            background: var(--success);
+            color: white;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin: 16px 0;
+        }
+
+        .tech-tag {
+            padding: 4px 10px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+        }
+
+        .pr-section {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .pr-section h4 {
+            font-size: 0.9375rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text-secondary);
+        }
+
+        .pr-item {
+            margin-bottom: 12px;
+        }
+
+        .pr-title {
+            font-size: 0.9375rem;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .pr-title a {
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .pr-title a:hover {
+            color: var(--accent);
+        }
+
+        .pr-meta {
+            font-size: 0.8125rem;
+            color: var(--text-tertiary);
+        }
+
+        .error-message {
+            background: var(--error);
+            color: white;
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        footer {
+            margin-top: 80px;
+            padding-top: 32px;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            color: var(--text-tertiary);
+            font-size: 0.875rem;
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 32px 16px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .expert-header {
+                flex-direction: column;
+            }
+
+            .settings {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Ezra</h1>
+            <p class="subtitle">Find the right experts for your open source repos!</p>
+        </header>
+
+        <div class="search-section">
+            <div class="search-box">
+                <textarea
+                    id="queryInput"
+                    placeholder="Describe your technical question in natural language...&#10;&#10;Example: useEffect cleanup functions for preventing memory leaks in async operations"
+                ></textarea>
+
+                <div class="settings">
+                    <div class="setting-group">
+                        <label for="maxRepos">Repositories</label>
+                        <input type="number" id="maxRepos" value="3" min="1" max="5">
+                    </div>
+                    <div class="setting-group">
+                        <label for="maxPrs">PRs per Repo</label>
+                        <input type="number" id="maxPrs" value="50" min="20" max="200">
+                    </div>
+                    <div class="setting-group">
+                        <label for="topExperts">Top Experts</label>
+                        <input type="number" id="topExperts" value="5" min="1" max="10">
+                    </div>
+                </div>
+
+                <button id="searchBtn" onclick="findExperts()">Find Experts</button>
+            </div>
+        </div>
+
+        <div id="loadingSection" class="loading hidden">
+            <div class="spinner"></div>
+            <p id="loadingStatus">Analyzing your query...</p>
+        </div>
+
+        <div id="errorSection" class="hidden">
+            <div class="error-message" id="errorMessage"></div>
+        </div>
+
+        <div id="resultsSection" class="results-section hidden"></div>
+
+        
+    </div>
+
+    <script>
+        async function findExperts() {
+            const query = document.getElementById('queryInput').value.trim();
+            const maxRepos = parseInt(document.getElementById('maxRepos').value);
+            const maxPrs = parseInt(document.getElementById('maxPrs').value);
+            const topExperts = parseInt(document.getElementById('topExperts').value);
+
+            if (!query) {
+                showError('Please enter a query');
+                return;
+            }
+
+            // Show loading
+            document.getElementById('searchBtn').disabled = true;
+            document.getElementById('loadingSection').classList.remove('hidden');
+            document.getElementById('errorSection').classList.add('hidden');
+            document.getElementById('resultsSection').classList.add('hidden');
+
+            try {
+                updateLoadingStatus('Selecting repositories with AI...');
+
+                const response = await fetch('/api/find-experts', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        query: query,
+                        max_repos: maxRepos,
+                        max_prs_per_repo: maxPrs,
+                        top_n: topExperts
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.status === 'error') {
+                    showError(data.message);
+                    return;
+                }
+
+                displayResults(data);
+
+            } catch (error) {
+                showError('Failed to connect to server: ' + error.message);
+            } finally {
+                document.getElementById('searchBtn').disabled = false;
+                document.getElementById('loadingSection').classList.add('hidden');
+            }
+        }
+
+        function updateLoadingStatus(status) {
+            document.getElementById('loadingStatus').textContent = status;
+        }
+
+        function showError(message) {
+            document.getElementById('errorMessage').textContent = message;
+            document.getElementById('errorSection').classList.remove('hidden');
+            document.getElementById('loadingSection').classList.add('hidden');
+        }
+
+        function displayResults(data) {
+            const resultsSection = document.getElementById('resultsSection');
+
+            let html = `
+                <div class="repo-info">
+                    <h3>Analyzed Repositories</h3>
+                    <div class="repo-list">
+                        ${data.selected_repos.map(repo => `<span class="repo-tag">${repo}</span>`).join('')}
+                    </div>
+                    <p class="repo-explanation">${data.repo_explanation}</p>
+                    <p class="repo-explanation" style="margin-top: 8px; font-size: 0.875rem;">
+                        📊 Analyzed ${data.total_prs_analyzed} pull requests
+                    </p>
+                </div>
+            `;
+
+            data.experts.forEach((expert, index) => {
+                const score = (expert.similarity_score * 100).toFixed(0);
+
+                html += `
+                    <div class="expert-card">
+                        <div class="expert-header">
+                            <div class="expert-info">
+                                <h3>
+                                    <a href="${expert.github_url}" target="_blank">#${index + 1} ${expert.author}</a>
+                                </h3>
+                                <div class="expert-metrics">
+                                    <span class="metric">📝 ${expert.total_relevant_prs} relevant PRs</span>
+                                    <span class="metric">📏 ${expert.total_lines_changed.toLocaleString()} lines</span>
+                                </div>
+                            </div>
+                            <div class="score-badge">
+                                ${score}% Match
+                            </div>
+                        </div>
+
+                        ${expert.tech_expertise && expert.tech_expertise.length > 0 ? `
+                            <div class="tech-tags">
+                                ${expert.tech_expertise.slice(0, 10).map(tech =>
+                                    `<span class="tech-tag">${tech}</span>`
+                                ).join('')}
+                            </div>
+                        ` : ''}
+
+                        <div class="pr-section">
+                            <h4>Most Relevant Work</h4>
+                            ${expert.top_prs.map(pr => `
+                                <div class="pr-item">
+                                    <div class="pr-title">
+                                        <a href="${pr.url}" target="_blank">${pr.title}</a>
+                                    </div>
+                                    <div class="pr-meta">
+                                        ${pr.repo} • ${(pr.similarity * 100).toFixed(0)}% match
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+
+            resultsSection.innerHTML = html;
+            resultsSection.classList.remove('hidden');
+        }
+
+        // Allow Enter key in textarea to submit (Ctrl+Enter)
+        document.getElementById('queryInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                e.preventDefault();
+                findExperts();
+            }
+        });
+    </script>
+</body>
+</html>
